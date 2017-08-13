@@ -1,15 +1,19 @@
 {
-  "name": "node-authentication",
+  "name": "node-api",
   "version": "1.0.0",
   "description": "Projeto base para autenticacao jwt",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
-    "start":"npm install"
+    "start": "npm install",
+    "dev": "node server.js"
   },
   "author": "Maikon Canuto",
   "license": "ISC",
   "dependencies": {
+    "body-parser": "^1.17.2",
+    "express": "^4.15.4",
     "mongodb": "^2.2.31",
-    "mongoose": "^4.11.6"
+    "mongoose": "^4.11.6",
+    "request": "^2.81.0"
   }
 }
