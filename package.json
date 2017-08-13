@@ -5,17 +5,20 @@
   "main": "server.js",
   "scripts": {
     "start": "npm install",
-    "dev": "node server.js"
+    "dev": "nodemon server.js",
+    "production": "node server.js"
   },
   "author": "Maikon Canuto",
   "license": "ISC",
   "dependencies": {
+    "bcrypt-nodejs": "0.0.3",
     "body-parser": "^1.17.2",
     "express": "^4.15.4",
     "jsonwebtoken": "^7.4.2",
     "mongodb": "^2.2.31",
     "mongoose": "^4.11.6",
-    "morgan": "^1.8.2"
+    "morgan": "^1.8.2",
+    "mpromise": "^0.5.5"
   },
   "devDependencies": {
     "nodemon": "^1.11.0"

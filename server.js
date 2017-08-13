@@ -2,6 +2,8 @@ const express     = require('express');
 const bodyParser  = require('body-parser');
 const mongoose    = require('mongoose');
 const jwt         = require('jsonwebtoken');
+const bcrypt      = require('bcrypt-nodejs');
+const mpromise    = require('mpromise');
 const morgan      = require('morgan');
 const server      = express();
 const router      = express.Router();
@@ -38,28 +40,77 @@ server.use(morgan('dev'));
  * Rotas
  */
 server.get('/', (req, res) => {
-    res.send('Rota padrão');
+    res.json({
+        message: 'Rota padrão - API'
+    });
 });
 
-server.get('/create', (req, res) => {
+server.use('/api', router);
+
+router.post('/auth', (req, res) => {
+    Usuario.findOne({
+        nome: req.body.nome
+    }, (error, user) => {
+        if(error){
+            res.json({
+                success: false,
+                error: error
+            });
+
+            throw error;
+        }
+
+        if(!user){
+            res.json({
+                success: false,
+                message: 'Usuário não encontrado'
+            });
+        }
+
+        if(!bcrypt.compareSync(req.body.senha, user.senha)){
+            res.json({
+                success: false,
+                message: 'Senha inválida'
+            });
+        }
+
+        let token = jwt.sign(user, server.get('superNode-auth'), {
+            expiresIn: 1440
+        });
+
+        res.json({
+            success: true,
+            message: 'Usuário validado com sucesso',
+            token: token
+        });
+
+    });
+});
+
+
+router.get('/create', (req, res) => {
     let usuario = new Usuario({
-        nome: 'Maikon Canuto',
-        senha: 'senha123',
+        nome: 'maikoncanuto',
+        senha: bcrypt.hashSync('123'),
         admin: true
     });
 
     usuario.save()
-    .then((doc) => {
-        console.log('Usuário Salvo com sucesso', doc);
-
+    .then((data) => {
         res.json({
-            success: true
+            success: true,
+            data: data
         });
     }).catch((error) => {
-        if(error){
-            console.log("ERROR AO SALVAR USUÁRIO");
-            throw error;
-        }
+        res.json({
+            error: error
+        });
+    });
+});
+
+router.get('/users', (req, res) => {
+    Usuario.find({}, (error, users) => {
+        res.json(users);
     });
 });
 
@@ -68,5 +119,5 @@ server.get('/create', (req, res) => {
 * Iniciando servidor
 */
 server.listen(port, () => {
-    console.log('Running...');
+    console.log('Running in '+ port + '...');
 });
